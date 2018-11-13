@@ -1,70 +1,42 @@
-import optparse
-import sys
-
-
-def get_points_from_file(filename):
-    points = []
-    file = open(filename, 'r')
-    for point in file:
-        coordinates = [float(x) for x in point.split(' ')]
-        points.append(coordinates)
-
-    return points
-
-
-def get_set_file_from_options():
-    parser = optparse.OptionParser()
-    parser.add_option('-t', dest='set_file')
-    options, args = parser.parse_args()
-
-    return options.set_file
-
-
-def get_test_points_from_stdin():
-    points = []
-    while True:
-        try:
-            coordinates = [float(x) for x in sys.stdin.readLine().split(' ')]
-            points.append(coordinates)
-        except:
-            return points
+import itertools
+import random
 
 
 def get_column_max_min(points):
-    dimension = len(points[0])
-    max_points = [-1000] * dimension
-    min_points = [1000] * dimension
-    for point in points:
-        for dim in range(dimension):
-            if point[dim] > max_points[dim]:
-                max_points[dim] = point[dim]
-            if point[dim] < min_points[dim]:
-                min_points[dim] = point[dim]
+    columns = [column(points, idx) for idx, val in enumerate(points[0])]
+    min_points = [min(col) for col in columns]
+    max_points = [max(col) for col in columns]
 
     return {'max_points': max_points, 'min_points': min_points}
 
 
 def scale_points(points, column_max_min):
-    zipped = list(zip(column_max_min['min_points'], column_max_min['max_points']))
     scaled = []
     for p in points:
         point = []
-        for i in range(len(p)):
-            a = zipped[i][0]
-            b = zipped[i][1]
-            scaled_point = p[i] / (b - a) - a / (b - a)
-            point.append(scaled_point)
-
+        for idx, val in enumerate(p):
+            point.append((val - column_max_min['min_points'][idx]) / (
+                        column_max_min['max_points'][idx] - column_max_min['min_points'][idx]))
         scaled.append(point)
 
     return scaled
 
 
-def create_random_division(points, proportion):
+def column(matrix, i):
+    return [row[i] for row in matrix]
+
+
+def create_alphas():
+    return [10 ** x for x in range(-4, 2)]
+
+
+def create_random_division(points, percents):
     train_set = []
     validation_set = []
-    for index in range(len(points)):
-        if index % proportion != 0:
+    data_size = len(points)
+    train_set_size = int(data_size * percents)
+    for index in range(data_size):
+        if index < train_set_size:
             train_set.append(points[index])
         else:
             validation_set.append(points[index])
@@ -78,3 +50,23 @@ def create_ordered_divisions(divisions_quantity, points, proportion):
         divisions.append(create_random_division(points, proportion))
 
     return divisions
+
+
+def generate_polynomial_with_teta(dimension, degree):
+    dimensions = range(dimension, -1, -1)
+    combinations = itertools.combinations_with_replacement(dimensions, degree)
+    polynomial_with_teta = []
+    for x in combinations:
+        ls = list(x)
+        ls.append(random.uniform(-1.0, 1.0))
+        polynomial_with_teta.append(ls)
+
+    return polynomial_with_teta
+
+
+def generate_random_polynomials(dimension, max_degree):
+    polynomials = []
+    for degree in range(max_degree):
+        polynomials.append(generate_polynomial_with_teta(dimension, degree))
+
+    return polynomials
