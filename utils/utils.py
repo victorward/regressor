@@ -52,16 +52,17 @@ def create_ordered_divisions(divisions_quantity, points, proportion):
     return divisions
 
 
+# teta czy multiplayer
 def generate_polynomial_with_teta(dimension, degree):
     dimensions = range(dimension, -1, -1)
     combinations = itertools.combinations_with_replacement(dimensions, degree)
-    polynomial_with_teta = []
-    for x in combinations:
-        ls = list(x)
-        ls.append(random.uniform(-1.0, 1.0))
-        polynomial_with_teta.append(ls)
+    # polynomial_with_teta = []
+    # for x in combinations:
+    #     ls = list(x)
+    #     ls.append(random.uniform(-1.0, 1.0))
+    #     polynomial_with_teta.append(ls)
 
-    return polynomial_with_teta
+    return [{'teta': list(c), 'multiplier': random.uniform(-1.0, 1.0)} for c in combinations]
 
 
 def generate_random_polynomials(dimension, max_degree):
