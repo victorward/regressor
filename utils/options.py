@@ -6,3 +6,8 @@ class Options:
         self.learning_rate = learning_rate
         self.max_iter = max_iter
         self.train_percents = train_percents
+
+    def __str__(self) -> str:
+        return 'divisions_quantity\t{}\nmax_polynomial_degree\t{}\nlearning_rate\t{}\nmax_iter\t{}\ntrain_percents\t{}\n' \
+            .format(self.divisions_quantity, self.max_polynomial_degree, self.learning_rate, self.max_iter,
+                    self.train_percents)
