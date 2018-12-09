@@ -28,13 +28,12 @@ def find_best_model(options, points_min_max, scaled_points, random_polynomials):
     return models[0]
 
 
-def find_best_alpha(best_model, random_polynomials, scaled_set_points, scaled_test_points, points_min_max):
+def find_best_alpha(options, best_model, random_polynomials, scaled_set_points, scaled_test_points, points_min_max):
     teta = random_polynomials[best_model.degree]
     linear_set_points = utils.convert_to_linear(teta, scaled_set_points)
     linear_test_points = utils.convert_to_linear(teta, scaled_test_points)
     linear_set_points_with_1 = utils.add_1_at_start(linear_set_points)
     linear_test_points_with_1 = utils.add_1_at_start(linear_test_points)
-    options = Options(max_iter=10000, learning_rate=0.01)
     new_teta = utils.gradient(linear_set_points_with_1, options, best_model.alpha)
     linear_test_points_with_1_columns = utils.get_points_by_column(linear_test_points_with_1)
     result = utils.get_current_value(new_teta, linear_test_points_with_1_columns)
@@ -52,14 +51,15 @@ def apply_calculations(options, set_points, test_points):
     scaled_test_points = utils.scale_points(test_points, set_points_min_max)
 
     best_model = find_best_model(options, set_points_min_max, scaled_set_points, random_polynomials)
-    best_alpha = find_best_alpha(best_model, random_polynomials, scaled_set_points, scaled_test_points,
+    best_alpha = find_best_alpha(options, best_model, random_polynomials, scaled_set_points, scaled_test_points,
                                  set_points_min_max)
 
     utils.print_results(best_alpha)
 
 
 def start():
-    options = Options(max_iter=800)
+    options = Options(max_iter=8000, learning_rate=0.01, max_polynomial_degree=7,
+                      divisions_quantity=7, train_percents=0.9)
     files_handler = FilesHandler()
     set_points = files_handler.get_points_from_file(files_handler.get_set_file_from_options())
     test_points = files_handler.get_test_points_from_stdin()

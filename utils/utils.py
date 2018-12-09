@@ -113,8 +113,10 @@ def gradient(points, options, alpha):
         mistake_sum = sum_mistake(current_value, desired_value, size)
         if mistake_sum <= mistake_sum_tmp:
             options.learning_rate = options.learning_rate * 1.1
+            # options.learning_rate = options.learning_rate * (1 + float(options.learning_rate))
         else:
             options.learning_rate = options.learning_rate * 0.9
+            # options.learning_rate = options.learning_rate * (1 - float(options.learning_rate))
 
         gradient = get_gradient_free_expression(columns, current_value, desired_value, size, 0)
         gradient_alpha = gradient + alpha / size * teta[-1]
