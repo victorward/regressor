@@ -142,10 +142,10 @@ def create_random_division(points, percents):
     return {'train_set': train_set, 'validation_set': validation_set}
 
 
-def create_ordered_divisions(divisions_quantity, points, proportion):
+def create_ordered_divisions(divisions_quantity, points, percents):
     divisions = []
     for i in range(divisions_quantity):
-        divisions.append(create_random_division(points, proportion))
+        divisions.append(create_random_division(points, percents))
 
     return divisions
 

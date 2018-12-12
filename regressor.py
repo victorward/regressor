@@ -58,8 +58,12 @@ def apply_calculations(options, set_points, test_points):
 
 
 def start():
-    options = Options(max_iter=8000, learning_rate=0.01, max_polynomial_degree=7,
-                      divisions_quantity=7, train_percents=0.9)
+    # options = Options(max_iter=6000, learning_rate=0.01, max_polynomial_degree=7,
+    #                   divisions_quantity=7, train_percents=0.9)
+    # options = Options(max_iter=4000, learning_rate=0.001, max_polynomial_degree=6,
+    #                   divisions_quantity=7, train_percents=0.8)
+    options = Options(max_iter=9000, learning_rate=0.001, max_polynomial_degree=6,
+                      divisions_quantity=2, train_percents=0.8)
     files_handler = FilesHandler()
     set_points = files_handler.get_points_from_file(files_handler.get_set_file_from_options())
     test_points = files_handler.get_test_points_from_stdin()
