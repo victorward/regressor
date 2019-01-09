@@ -42,7 +42,7 @@ def get_points_by_column(matrix):
     return points
 
 
-def create_alphas():
+def create_lambdas():
     return [10 ** x for x in range(-4, 2)]
 
 
@@ -68,9 +68,9 @@ def get_gradient_free_expression(columns, current_value, desired_value, size, i)
     return -sum(map(operator.mul, columns[i], list(map(operator.sub, desired_value, current_value)))) * 1 / size
 
 
-def get_gradient_new_teta(teta, teta_tmp, columns, current_value, desired_value, size, alpha, learning_rate, i):
+def get_gradient_new_teta(teta, teta_tmp, columns, current_value, desired_value, size, lmbda, learning_rate, i):
     gradient = get_gradient_free_expression(columns, current_value, desired_value, size, i)
-    gradient_lambda = gradient + alpha / size * teta[i - 1]
+    gradient_lambda = gradient + lmbda / size * teta[i - 1]
     teta_tmp[i - 1] = teta[i - 1] - learning_rate * gradient_lambda
 
     return teta_tmp
@@ -98,7 +98,7 @@ def convert_to_linear(teta, points):
     return linear
 
 
-def gradient(points, options, alpha):
+def gradient(points, max_iter, learning_rate, lmbda):
     n = len(points[0]) - 2
     teta = repeat_value(1, n + 1)
     mistake_sum = 0
@@ -106,46 +106,61 @@ def gradient(points, options, alpha):
     desired_value = columns[n + 1]
     size = len(columns[1])  # moze buty 0
 
-    for i in range(options.max_iter):
+    for i in range(max_iter):
         teta_tmp = teta
         mistake_sum_tmp = mistake_sum
         current_value = get_current_value(teta, columns)
         mistake_sum = sum_mistake(current_value, desired_value, size)
         if mistake_sum <= mistake_sum_tmp:
-            options.learning_rate = options.learning_rate * 1.1
-            # options.learning_rate = options.learning_rate * (1 + float(options.learning_rate))
+            learning_rate = learning_rate * 1.1
         else:
-            options.learning_rate = options.learning_rate * 0.9
-            # options.learning_rate = options.learning_rate * (1 - float(options.learning_rate))
+            learning_rate = learning_rate * 0.9
 
         gradient = get_gradient_free_expression(columns, current_value, desired_value, size, 0)
-        gradient_alpha = gradient + alpha / size * teta[-1]
-        teta_tmp[-1] = teta[-1] - options.learning_rate * gradient_alpha
+        gradient_lmbda = gradient + lmbda / size * teta[-1]
+        teta_tmp[-1] = teta[-1] - learning_rate * gradient_lmbda
         for p in range(1, len(columns) - 1):
             teta = get_gradient_new_teta(teta, teta_tmp, columns, current_value, desired_value, size,
-                                         alpha, options.learning_rate, p)
+                                         lmbda, learning_rate, p)
 
     return teta
 
 
-def create_random_division(points, percents):
+# def create_division(points, percents):
+#     train_set = []
+#     validation_set = []
+#     data_size = len(points)
+#     train_set_size = int(data_size * percents)
+#     for index in range(data_size):
+#         if index < train_set_size:
+#             train_set.append(points[index])
+#         else:
+#             validation_set.append(points[index])
+#
+#     return {'train_set': train_set, 'validation_set': validation_set}
+
+
+def create_division(points, percents, division_number, divisions_quantity):
     train_set = []
     validation_set = []
     data_size = len(points)
     train_set_size = int(data_size * percents)
+    fold_size = int(data_size / divisions_quantity)
+    fold_start_start_index = fold_size * division_number
     for index in range(data_size):
-        if index < train_set_size:
-            train_set.append(points[index])
-        else:
+        if fold_start_start_index < index <= (fold_start_start_index + fold_size):
             validation_set.append(points[index])
+        else:
+            train_set.append(points[index])
 
     return {'train_set': train_set, 'validation_set': validation_set}
 
 
-def create_ordered_divisions(divisions_quantity, points, percents):
+def create_divisions(divisions_quantity, points, percents):
     divisions = []
     for i in range(divisions_quantity):
-        divisions.append(create_random_division(points, percents))
+        # divisions.append(create_division(points, percents))
+        divisions.append(create_division(points, percents, i, divisions_quantity))
 
     return divisions
 

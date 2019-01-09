@@ -2,19 +2,19 @@ import utils.utils as utils
 
 
 class Model:
-    def __init__(self, degree, alpha, options):
+    def __init__(self, degree, lmbda, options):
         self.degree = degree
-        self.alpha = alpha
+        self.lmbda = lmbda
         self.options = options
         self.mistake = None
         self.mistakes = []
 
     def __str__(self) -> str:
-        return 'degree\t{}\nalpha\t{}\nmistake\t{}\nmistakes\t{}\n'.format(
-            self.degree, self.alpha, self.mistake, self.mistakes
+        return 'degree\t{}\nlmbda\t{}\nmistake\t{}\nmistakes\t{}\n'.format(
+            self.degree, self.lmbda, self.mistake, self.mistakes
         )
-        # return 'degree\t{}\nalpha\t{}\nmistake\t{}\nmistakes\t{}\noptions:\n{}\n'.format(
-        #     self.degree, self.alpha, self.mistake, self.mistakes, self.options
+        # return 'degree\t{}\lmbda\t{}\nmistake\t{}\nmistakes\t{}\noptions:\n{}\n'.format(
+        #     self.degree, self.lmbda, self.mistake, self.mistakes, self.options
         # )
 
     def calc_division_mistake(self, division, teta, set_points_min_max):
@@ -34,5 +34,5 @@ class Model:
         return utils.calculate_mistake(unscaled_results, unscaled_desired_results)
 
     def gradient(self, points):
-        return utils.gradient(points, self.options, self.alpha)
+        return utils.gradient(points, self.options.max_iter, self.options.learning_rate, self.lmbda)
 
