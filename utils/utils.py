@@ -11,23 +11,42 @@ def get_column_max_min(points):
     return {'max_points': max_points, 'min_points': min_points}
 
 
+# def scale_points(points, column_max_min):
+#     scaled = []
+#     for p in points:
+#         point = []
+#         for idx, val in enumerate(p):
+#             point.append((val - column_max_min['min_points'][idx]) / (
+#                     column_max_min['max_points'][idx] - column_max_min['min_points'][idx]))
+#         scaled.append(point)
+#
+#     return scaled
+
 def scale_points(points, column_max_min):
     scaled = []
     for p in points:
         point = []
         for idx, val in enumerate(p):
-            point.append((val - column_max_min['min_points'][idx]) / (
-                    column_max_min['max_points'][idx] - column_max_min['min_points'][idx]))
+            norm_value = (val - column_max_min['min_points'][idx]) / (
+                    column_max_min['max_points'][idx] - column_max_min['min_points'][idx])
+            point.append((norm_value - 0.5) * 2)
         scaled.append(point)
 
     return scaled
+
+
+# def unscale_results(results, column_max_min):
+#     min = column_max_min['min_points'][-1]
+#     max = column_max_min['max_points'][-1]
+#
+#     return [(res - min / (min - max)) * (max - min) for res in results]
 
 
 def unscale_results(results, column_max_min):
     min = column_max_min['min_points'][-1]
     max = column_max_min['max_points'][-1]
 
-    return [(res - min / (min - max)) * (max - min) for res in results]
+    return [(((res - min / (min - max)) * (max - min)) + 0.5) * 2 for res in results]
 
 
 def column(matrix, i):
