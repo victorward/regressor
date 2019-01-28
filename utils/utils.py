@@ -11,42 +11,44 @@ def get_column_max_min(points):
     return {'max_points': max_points, 'min_points': min_points}
 
 
-# def scale_points(points, column_max_min):
-#     scaled = []
-#     for p in points:
-#         point = []
-#         for idx, val in enumerate(p):
-#             point.append((val - column_max_min['min_points'][idx]) / (
-#                     column_max_min['max_points'][idx] - column_max_min['min_points'][idx]))
-#         scaled.append(point)
-#
-#     return scaled
-
 def scale_points(points, column_max_min):
     scaled = []
     for p in points:
         point = []
         for idx, val in enumerate(p):
-            norm_value = (val - column_max_min['min_points'][idx]) / (
-                    column_max_min['max_points'][idx] - column_max_min['min_points'][idx])
-            point.append((norm_value - 0.5) * 2)
+            point.append((val - column_max_min['min_points'][idx]) / (
+                    column_max_min['max_points'][idx] - column_max_min['min_points'][idx]))
         scaled.append(point)
 
     return scaled
 
 
-# def unscale_results(results, column_max_min):
-#     min = column_max_min['min_points'][-1]
-#     max = column_max_min['max_points'][-1]
+# def scale_points(points, column_max_min):
+#     scaled = []
+#     for p in points:
+#         point = []
+#         for idx, val in enumerate(p):
+#             norm_value = (val - column_max_min['min_points'][idx]) / (
+#                     column_max_min['max_points'][idx] - column_max_min['min_points'][idx]) * 2 - 1
+#             point.append(norm_value)
+#         scaled.append(point)
 #
-#     return [(res - min / (min - max)) * (max - min) for res in results]
+#     return scaled
 
 
 def unscale_results(results, column_max_min):
     min = column_max_min['min_points'][-1]
     max = column_max_min['max_points'][-1]
 
-    return [(((res - min / (min - max)) * (max - min)) + 0.5) * 2 for res in results]
+    return [((res - min / (min - max)) * (max - min)) for res in results]
+
+
+#
+# def unscale_results(results, column_max_min):
+#     min = column_max_min['min_points'][-1]
+#     max = column_max_min['max_points'][-1]
+#
+#     return [(((res - min / (min - max)) * (max - min)) + 1) / 2 for res in results]
 
 
 def column(matrix, i):
@@ -96,7 +98,7 @@ def get_gradient_new_teta(teta, teta_tmp, columns, current_value, desired_value,
 
 
 def convert_to_linear(teta, points):
-    points_with_1_at_start = add_1_at_start(points)
+    points_with_1_at_start = add_1(points)
     linear = []
     for point in points_with_1_at_start:
         new = []
@@ -163,7 +165,6 @@ def create_division(points, percents, division_number, divisions_quantity):
     train_set = []
     validation_set = []
     data_size = len(points)
-    train_set_size = int(data_size * percents)
     fold_size = int(data_size / divisions_quantity)
     fold_start_start_index = fold_size * division_number
     for index in range(data_size):
@@ -199,7 +200,7 @@ def generate_random_polynomials(dimension, max_degree):
     return polynomials
 
 
-def add_1_at_start(points):
+def add_1(points):
     return [[1] + point for point in points]
 
 

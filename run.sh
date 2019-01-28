@@ -9,7 +9,7 @@ echo "Runtime was $runtime1"
 python evaluate.py 1
 echo Finish set1
 echo
-
+'
 echo Run set2
 start2=$(date +%s.%N)
 python regressor.py -t set2.txt < in2.txt > res2.txt
@@ -19,7 +19,7 @@ echo "Runtime was $runtime2"
 python evaluate.py 2
 echo Finish set2
 echo
-'
+: '
 echo Run set3
 start3=$(date +%s.%N)
 python regressor.py -t set3.txt < in3.txt > res3.txt
@@ -29,7 +29,7 @@ echo "Runtime was $runtime3"
 python evaluate.py 3
 echo Finish set3
 echo
-: '
+
 echo Run set4
 start4=$(date +%s.%N)
 python regressor.py -t set4.txt < in4.txt > res4.txt
